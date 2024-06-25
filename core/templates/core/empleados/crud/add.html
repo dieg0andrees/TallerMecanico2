@@ -1,0 +1,34 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block contenido %}
+
+
+<div class="row column3">
+    <div class="col-md-6 offset-md-3">
+        <div class="dash_blog">
+            <div class="dash_blog_inner">
+                <div class="row">
+                    <div class="col-md-12">
+                        {% load crispy_forms_tags %}
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <h2>Mecanicos</h2>
+                        <table>
+                            {{ form | crispy }}
+                        </table>
+                        <input class="btn btn-danger mt-3" type="reset" value="Limpiar">
+                        <input class="btn btn-success mt-3" type="submit" value="Guardar">                
+                        <a href="{% url 'empleados' %}" class="btn btn-primary mt-3">Volver</a>
+                    </form>
+                    
+                    
+                    <h5>{{ msj }}</h5>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

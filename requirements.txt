@@ -1,0 +1,16 @@
+django
+django-admin-interface
+django-crispy-forms
+crispy-bootstrap4
+pillow
+psycopg2-binary
+djangorestframework
+requests
+django-axes
+django-admin-confirm
+django-simple-captcha
+django-multi-captcha-admin
+django-recaptcha
+django-recaptcha2
+cloudinary
+whitenoise

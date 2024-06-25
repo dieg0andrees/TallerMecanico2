@@ -1,0 +1,11 @@
+{
+    "builds":[{
+        "src": "Gamenba/wsgi.py",
+        "use": "@vercel/pyhton",
+        "config": { "maxLambdaSize": "15mb", "runtime": "python3.9"}
+    }],
+    "routes" :[{
+        "src": "/(.*)",
+        "dest": "Gamenba/wsgi.py"
+    }]
+}

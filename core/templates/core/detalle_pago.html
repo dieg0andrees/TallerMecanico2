@@ -1,0 +1,87 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block contenido %}
+
+
+
+<div class="container">
+    <h1 class="">Resumen del Pedido</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Servicio</th>
+                <th>Precio CLP</th>
+                <th>Mecanico</th>
+                <th>Patente</th>
+                <th>Comentarios</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ cliente.nombre }} {{ cliente.apellido }}</td>
+                <td>{{ servicio.nombre_servicio }}</td>
+                <td>${{ servicio.precio }}</td>
+                <td>{{ mecanico.nombre }} {{ mecanico.apellido }}</td>
+                <td>{{ patente_vehiculo }}</td>
+                <td>{{ comentarios }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="row">
+        <div class="col-md-3">
+            <h2>Valor del Dólar</h2>
+            <p><strong>Valor actual del dólar:</strong> {{ valor_dolar }}</p>
+        </div>
+        <div class="col-md-6">
+            <h2 class="text-danger">Total a Pagar en dólares</h2>
+            <p>${{ valor_total }}</p>
+        </div>
+    </div>
+    <div style="justify-content: center;" class="text-center" id="paypal-button"></div>
+</div>
+
+<script src="https://www.paypalobjects.com/api/checkout.js"></script>
+<script>
+    paypal.Button.render({
+        // Configure environment
+        env: 'sandbox',
+        client: {
+            sandbox: 'AU7Lqs-sup_dpNsNQnYS8oGGX0dQC6_vcYlPmBhk_v7OQUSMtLCPbGlhrwoIpXxrxwI6vdGQ64pboZ2d',
+            production: 'demo_production_client_id'
+        },
+        // Customize button (optional)
+        locale: 'en_US',
+        style: {
+            size: 'large',
+            color: 'blue',
+            shape: 'rect',
+        },
+    
+        // Enable Pay Now checkout flow (optional)
+        commit: true,
+    
+    // Set up a payment
+    payment: function (data, actions) {
+        return actions.payment.create({
+            transactions: [{
+                amount: {
+                    total: '{{ valor_total }}',
+                    currency: 'USD'
+                }
+            }]
+        });
+    },
+    // Execute the payment
+    onAuthorize: function (data, actions) {
+        return actions.payment.execute().then(function () {
+        // Show a confirmation message to the buyer
+            window.alert('Thank you for your purchase!');
+        });
+    }
+    }, '#paypal-button');
+
+</script>
+
+
+{% endblock %}

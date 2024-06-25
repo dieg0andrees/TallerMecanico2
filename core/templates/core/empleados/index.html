@@ -1,0 +1,41 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block contenido %}
+
+<div class="container mt-3">
+    <h2>Mecanicos</h2>
+    <p>En la siguiente tabla podras ver todos los mecanicos contratados:</p>            
+    <table class="table">
+        <thead>
+          <tr>
+            <th>Rut</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Tipo</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for aux in lista %}
+              <tr>
+                  <td>{{ aux.rut }}</td>
+                  <td>{{ aux.nombre }}</td>
+                  <td>{{ aux.apellido }}</td>
+                  <td>{{ aux.tipo }} </td>
+                  <td>
+                    <a class="btn btn-info" href="{% url 'empleadosupdate' aux.id %}">Actualizar</a>
+                  </td>
+                  <td>
+                    <a class="btn btn-danger" onclick="confimarEliminar({{aux.id}})" >Eliminar</a>
+                  </td>
+              </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <a href="{% url 'empleadosadd' %}" class="nav-item nav-link active">Agregar Mecanico</a>
+      
+</div>
+
+
+
+{% endblock %}

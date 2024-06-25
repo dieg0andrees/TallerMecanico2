@@ -1,0 +1,34 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block contenido %}
+
+<div class="container mt-3">
+    <h2>Gestión de servicios</h2>
+    <p>En la siguiente tabla podras ver todos los tipos de servicios:</p>            
+    <table class="table">
+        <thead>
+          <tr>
+            <th>Nombre servicio</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for aux in lista %}
+              <tr>
+                  <td>{{ aux.nombre_servicio }}</td>
+                  <td>{{ aux.descripcion }}</td>
+                  <td>{{ aux.precio }}</td>
+                  <td>
+                    <a class="btn btn-info" href="{% url 'serviciosupdate' aux.id %}">Actualizar</a>
+                  </td>
+                  <td>
+                    <a class="btn btn-danger" onclick="confimarEliminar({{aux.id}})" >Eliminar</a>
+                  </td>
+              </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <a href="{% url 'serviciosadd' %}" class="nav-item nav-link active">Agregar Servicio</a>
+</div>
+{% endblock %}

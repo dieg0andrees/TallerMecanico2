@@ -1,0 +1,38 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block contenido %}
+
+<div class="container mt-3">
+    <h2>Mis consultas</h2>
+    <p>En la siguiente tabla podras ver todas tus consultas:</p>            
+    <table class="table">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Servicio</th>
+            <th>Precio</th>
+            <th>Mecanico</th>
+            <th>Patente</th>
+            <th>Fecha</th>
+            <th>Comentarios</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for aux in lista %}
+              <tr>
+                  <td>{{ aux.cliente }}</td>
+                  <td>{{ aux.servicio }}</td>
+                  <td>${{ aux.servicio.precio }}</td>
+                  <td>{{ aux.mecanico }}</td>
+                  <td>{{ aux.patente_vehiculo }} </td>
+                  <td>{{ aux.fecha_servicio }} </td>
+                  <td>{{ aux.comentarios }} </td>
+              </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <a href="{% url 'booking' %}" class="nav-item nav-link active">Agregar otra consulta</a>
+      
+</div>
+
+{% endblock %}
