@@ -1,0 +1,33 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block contenido %}
+
+<div class="container mt-3">
+    <h2>Tipo de empleados</h2>
+    <p>En la siguiente tabla podras ver todos los tipos de empleados:</p>            
+    <table class="table">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for aux in lista %}
+              <tr>
+                  <td>{{ aux.id }}</td>
+                  <td>{{ aux.descripcion }}</td>
+                  <td>
+                    <a class="btn btn-info" href="{% url 'tipoempleadosupdate' aux.id %}">Actualizar</a>
+                  </td>
+                  <td>
+                    <a class="btn btn-danger" onclick="confimarEliminar({{aux.id}})">Eliminar</a>
+                  </td>
+              </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <a href="{% url 'tipoempleadosadd' %}" class="nav-item nav-link active">Agregar Tipo de empleado</a>
+      
+</div>
+{% endblock %}

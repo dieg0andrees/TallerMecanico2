@@ -1,0 +1,66 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block contenido %}
+    <!-- Page Header Start -->
+    <div class="container-fluid page-header mb-5 p-0" style="background-image: url(../../static/core/img/carousel-bg-1.jpg);">
+        <div class="container-fluid page-header-inner py-5">
+            <div class="container text-center">
+                <h1 class="display-3 text-white mb-3 animated slideInDown">Testimonio</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center text-uppercase">
+                        <li class="breadcrumb-item"><a href="{% url 'index' %}">Inicio</a></li>
+
+                        <li class="breadcrumb-item text-white active" aria-current="page">Testimonios</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Page Header End -->
+
+
+    <!-- Testimonial Start -->
+    <div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
+        <div class="container">
+            <div class="text-center">
+                <h6 class="text-primary text-uppercase">// Testimonio //</h6>
+                <h1 class="mb-5">Nuestros clientes opinan</h1>
+            </div>
+            <div class="owl-carousel testimonial-carousel position-relative">
+                <div class="testimonial-item text-center">
+                    <img class="bg-light rounded-circle p-2 mx-auto mb-3" src="{% static 'core/img/testimonial-1.jpg' %}"" style="width: 80px; height: 80px;">
+                    <h5 class="mb-0">Laura Hernandez</h5>
+                    <p>Ingeniero Comercial</p>
+                    <div class="testimonial-text bg-light text-center p-4">
+                    <p class="mb-0">¡Impresionante servicio! . Mi coche quedó como nuevo después de llevarlo a esta automotriz. El equipo es muy profesional y atento. ¡Totalmente recomendable!</p>
+                    </div>
+                </div>
+                <div class="testimonial-item text-center">
+                    <img class="bg-light rounded-circle p-2 mx-auto mb-3" src="{% static 'core/img/testimonial-2.jpg' %}"" style="width: 80px; height: 80px;">
+                    <h5 class="mb-0">Juan Pablo Gonzalez</h5>
+                    <p>Ingeniero en Informatica</p>
+                    <div class="testimonial-text bg-light text-center p-4">
+                    <p class="mb-0">Estoy muy satisfecho con la reparación de mi auto. El personal fue muy amable y se aseguraron de explicarme todos los detalles del trabajo realizado. Sin duda volveré la próxima vez que necesite ayuda con mi coche.</p>
+                    </div>
+                </div>
+                <div class="testimonial-item text-center">
+                    <img class="bg-light rounded-circle p-2 mx-auto mb-3" src="{% static 'core/img/testimonial-3.jpg' %}"" style="width: 80px; height: 80px;">
+                    <h5 class="mb-0">Diego Muñoz</h5>
+                    <p>Ingeniero en Informatica</p>
+                    <div class="testimonial-text bg-light text-center p-4">
+                    <p class="mb-0">La mejor experiencia en un taller automotriz que he tenido. La calidad de la reparación fue impecable y el precio muy justo. Además, me entregaron el auto más rápido de lo esperado.  ¡Gracias por el gran servicio!</p>
+                    </div>
+                </div>
+                <div class="testimonial-item text-center">
+                    <img class="bg-light rounded-circle p-2 mx-auto mb-3" src="{% static 'core/img/testimonial-4.jpg' %}"" style="width: 80px; height: 80px;">
+                    <h5 class="mb-0">Francisca Cuello</h5>
+                    <p>Medico</p>
+                    <div class="testimonial-text bg-light text-center p-4">
+                    <p class="mb-0">Me sorprendió gratamente la eficiencia y el profesionalismo de esta automotriz. Desde el primer contacto, todo el proceso fue transparente y sin complicaciones. Mi coche quedó perfecto. ¡Altamente recomendado.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Testimonial End -->
+{% endblock %}
