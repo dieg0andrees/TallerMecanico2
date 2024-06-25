@@ -14,3 +14,4 @@ django-recaptcha
 django-recaptcha2
 cloudinary
 whitenoise
+xhtml2pdf

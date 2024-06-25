@@ -1,0 +1,14 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block contenido %}
+
+
+<div class="container">
+    <h1>Pago completado</h1>
+    <p>Gracias por tu compra. El servicio ha sido registrado correctamente.</p>
+    <a href="{% url 'descargar_boleta' %}" class="btn btn-primary">Descargar Boleta</a>
+</div>
+
+
+
+{% endblock %}

@@ -1,5 +1,6 @@
-from django.http import HttpResponseBadRequest
-from django.shortcuts import render,redirect
+from io import BytesIO
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.shortcuts import render,redirect, get_object_or_404
 from django.urls import reverse
 import requests
 from .models import *
@@ -13,8 +14,13 @@ from rest_framework.renderers import JSONRenderer
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 import json
-
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from datetime import datetime
 from django.contrib import messages
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+
 ##API
 
 
@@ -400,47 +406,110 @@ def resumen_pedido(request):
     }
     return render(request, 'core/detalle_pago.html', aux)
 
-
-def confirmar_pago(request):
+@csrf_exempt
+@login_required
+def pago_servicio(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-
-        if data['status'] == 'COMPLETED':
+        try:
             rut_cliente = request.session.get('rut_cliente')
             patente_vehiculo = request.session.get('patente_vehiculo')
             servicio_id = request.session.get('servicio_id')
             mecanico_id = request.session.get('mecanico_id')
             comentarios = request.session.get('comentarios')
+            
+            if not (rut_cliente and patente_vehiculo and servicio_id and mecanico_id):
+                return JsonResponse({'status': 'error', 'message': 'Datos incompletos en la sesión.'}, status=400)
 
-            try:
-                cliente = Cliente.objects.get(rut_cliente=rut_cliente)
-                servicio = Servicio.objects.get(id=servicio_id)
-                mecanico = Empleado.objects.get(rut=mecanico_id)
+            cliente = Cliente.objects.get(rut_cliente=rut_cliente)
+            servicio = Servicio.objects.get(id=servicio_id)
+            mecanico = Empleado.objects.get(rut=mecanico_id)
 
-                Mecanico_servicio.objects.create(
-                    servicio=servicio,
-                    cliente=cliente,
-                    mecanico=mecanico,
-                    patente_vehiculo=patente_vehiculo,
-                    comentarios=comentarios
-                )
+            Mecanico_servicio.objects.create(
+                cliente=cliente,
+                servicio=servicio,
+                mecanico=mecanico,
+                patente_vehiculo=patente_vehiculo,
+                comentarios=comentarios
+            )
 
-                # Limpia la sesión después de completar la transacción
-                request.session.pop('rut_cliente')
-                request.session.pop('patente_vehiculo')
-                request.session.pop('servicio_id')
-                request.session.pop('mecanico_id')
-                request.session.pop('comentarios')
+            return JsonResponse({'status': 'success', 'message': 'Servicio actualizado correctamente.'})
 
-                # Redirige al usuario a la tabla de servicios
-                return redirect(reverse('consulta'))
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
-            except (Cliente.DoesNotExist, Servicio.DoesNotExist, Empleado.DoesNotExist) as e:
-                # Manejar excepciones si el cliente, servicio o mecanico no existen
-                return HttpResponseBadRequest('Algo salió mal durante la creación del servicio.')
+    return JsonResponse({'status': 'error', 'message': 'Método no permitido.'}, status=405)
 
-        # Manejar otros estados de pago si es necesario
-        # Ejemplo: 'PENDING', 'PROCESSING', etc.
+@login_required
+def confirmacion_pago(request):
+    return render(request, 'core/confirmacion_pago.html')
 
-    # Redirigir si no es una solicitud POST o si el estado del pago no es 'COMPLETED'
-    return redirect('core/booking.html')
+
+def render_to_pdf(template_src, context_dict):
+    template = get_template(template_src)
+    html = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
+
+def descargar_boleta(request):
+    # Obtener el último servicio del cliente para la boleta
+    cliente = get_object_or_404(Cliente, user=request.user)
+    ultimo_servicio = Mecanico_servicio.objects.filter(cliente=cliente).latest('fecha_servicio')
+
+    # Datos del último servicio
+    servicio = ultimo_servicio.servicio
+    mecanico = ultimo_servicio.mecanico
+    patente_vehiculo = ultimo_servicio.patente_vehiculo
+    comentarios = ultimo_servicio.comentarios
+
+    # Obtener datos adicionales
+    nombre_cliente = cliente.nombre
+    apellido_cliente = cliente.apellido
+    direccion_cliente = cliente.direccion
+    celular_cliente = cliente.celular
+    edad_cliente = cliente.edad
+    nombre_servicio = servicio.nombre_servicio
+    precio_servicio = servicio.precio
+    nombre_mecanico = mecanico.nombre
+    apellido_mecanico = mecanico.apellido
+    fecha_servicio = ultimo_servicio.fecha_servicio.strftime("%d-%m-%Y %H:%M:%S")
+
+    response = requests.get('https://mindicador.cl/api/dolar/')
+    if response.status_code == 200:
+        data = response.json()
+        valor_dolar = data.get('serie', [])[0].get('valor', 'No disponible') if data.get('serie') else 'No disponible'
+        precio_float = float(servicio.precio)
+        valor_total = round(precio_float / valor_dolar, 2)
+    else:
+        valor_dolar = 'No disponible'
+
+    # Ejemplo de datos, asegúrate de obtener los datos correctos
+    context = {
+        'nombre_cliente': nombre_cliente,
+        'apellido_cliente': apellido_cliente,
+        'direccion_cliente': direccion_cliente,
+        'celular_cliente': celular_cliente,
+        'edad_cliente': edad_cliente,
+        'nombre_servicio': nombre_servicio,
+        'precio_servicio': precio_servicio,
+        'nombre_mecanico': nombre_mecanico,
+        'apellido_mecanico': apellido_mecanico,
+        'patente_vehiculo': patente_vehiculo,
+        'comentarios': comentarios,
+        'fecha_servicio': fecha_servicio,
+        'valor_dolar': valor_dolar,
+        'valor_total': '{:.2f}'.format(valor_total)
+    }
+    pdf = render_to_pdf('core/voucher.html', context)
+    if pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        filename = "Boleta_de_Servicio.pdf"
+        content = "attachment; filename=%s" % filename
+        response['Content-Disposition'] = content
+        return response
+    return HttpResponse("Error al generar la boleta PDF.")
+
+def voucher(request):
+    return render(request,'core/voucher.html')

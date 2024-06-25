@@ -46,5 +46,8 @@ urlpatterns = [
     path('servicios/delete/<id>/',serviciosdelete, name="serviciosdelete"),
     path('account_locked/',account_locked, name = "account_locked"),
     path('captcha/', include('captcha.urls')),
+    path('pago_servicio/',pago_servicio, name="pago_servicio"),
+    path('confirmacion_pago/', confirmacion_pago, name='confirmacion_pago'),
+    path('descargar_boleta/', descargar_boleta, name='descargar_boleta'),
     
 ]
