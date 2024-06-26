@@ -4,6 +4,7 @@ django-crispy-forms
 crispy-bootstrap4
 pillow
 psycopg2-binary
+psycopg2
 djangorestframework
 requests
 django-axes
@@ -15,3 +16,5 @@ django-recaptcha2
 cloudinary
 whitenoise
 xhtml2pdf
+django-recaptcha2
+
